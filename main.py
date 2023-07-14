@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
-from PySide2.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QMainWindow, QLabel, QVBoxLayout, QGridLayout, QHBoxLayout, QCheckBox, QFileDialog, QSizePolicy
+from PySide2.QtWidgets import QApplication, QWidget, QPushButton, QLineEdit, QMainWindow, QLabel, QVBoxLayout, QGridLayout, QHBoxLayout, QCheckBox, QFileDialog, QSizePolicy, QMessageBox
 from PySide2.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PySide2 import QtGui
@@ -11,73 +11,46 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super(MainWindow, self).__init__()
         self.setWindowTitle("Function Plotter")
-        # make the window full screen
-        self.setFixedSize(1200,1000)
+        self.setFixedSize(1200,1000) # make the window full screen
+        self.setStyleSheet("background-color: #ACC8D7;") # change the window background color
+        self.setWindowIcon(QtGui.QIcon('icon.png')) # change the window icon
 
-        # change the window background color
-        self.setStyleSheet("background-color: #ACC8D7;")
+    
+        self.layout = QVBoxLayout() # main layout
+        self.input_layouts = []  # list of layouts for the input fields
+        self.layout_1 = QHBoxLayout() # layout for the checkboxes and the plot button
+        self.layout_2 = QHBoxLayout() # layout for the restart and save buttons
+
+        self.label = QLabel("Function Plotter") # add a label to the window
+        self.label.setAlignment(Qt.AlignCenter) # center the label
+        self.label.setStyleSheet("font-size: 80px; color: #1260CC; font-family: Times New Roman; font-weight: bold;") # change the label font and color
+        self.label.setFixedHeight(100) # set the label height
+        self.layout.addWidget(self.label) # add the label to the main layout
         
-        # change the window icon
-        self.setWindowIcon(QtGui.QIcon('icon.png'))
+        self.add_input_widgets("Enter the Function:", self.layout) 
+        self.add_input_widgets("Enter function minimum value:", self.layout)
+        self.add_input_widgets("Enter function maximum value:", self.layout)
 
-        self.layout = QVBoxLayout()
-        self.input_layouts = []
-        self.layout_1 = QHBoxLayout()
-        self.layout_2 = QHBoxLayout()
-
-        # add a label to the window
-        self.label = QLabel("Function Plotter")
-        self.label.setAlignment(Qt.AlignCenter)
-        self.label.setStyleSheet("font-size: 80px; color: #1260CC; font-family: Times New Roman; font-weight: bold;")
-        self.label.setFixedHeight(100)
-        self.layout.addWidget(self.label)
-        
-        self.configure_input_widgets("Enter the Function:", self.layout)
-        self.configure_input_widgets("Enter function minimum value:", self.layout)
-        self.configure_input_widgets("Enter function maximum value:", self.layout)
-
-        self.grid_checkbox = QCheckBox("Display Grid")
-        self.grid_checkbox.stateChanged.connect(self.update_plot_grid)
-        self.grid_checkbox.setStyleSheet("QCheckBox::indicator { width: 25px; height: 25px; }")
-        self.grid_checkbox.setStyleSheet("color: #1260CC; font-weight: bold; font-size: 20px;")
-        self.grid_checkbox.setFixedWidth(400)
-        self.layout_1.addWidget(self.grid_checkbox)
-
-        self.axes_checkbox = QCheckBox("Display axes")
-        self.axes_checkbox.stateChanged.connect(self.update_plot_axes)
-        self.axes_checkbox.setStyleSheet("QCheckBox::indicator { width: 25px; height: 25px; }")
-        self.axes_checkbox.setStyleSheet("color: #1260CC; font-weight: bold; font-size: 20px;")
-        self.axes_checkbox.setFixedWidth(400)
-        self.layout_1.addWidget(self.axes_checkbox)
+        self.grid_checkbox = self.add_checkbox("Show Grid", self.layout_1, self.update_plot_grid)
+        self.axes_checkbox = self.add_checkbox("Show Axes", self.layout_1, self.update_plot_axes)
    
-        self.plot_button = QPushButton("Plot")
-        self.plot_button.clicked.connect(self.plot)
-        self.plot_button.setStyleSheet("background-color: #1260CC;;border-radius: 10px; padding: 10px; color: white; font-weight: bold; font-size: 20px;")
-        self.plot_button.setFixedWidth(400)
-
-        self.layout_1.addWidget(self.plot_button)
+        self.plot_button = self.add_button("Plot", self.layout_1, self.plot)
         self.layout.addLayout(self.layout_1)
 
         self.figure = plt.figure()
         self.canvas = FigureCanvas(self.figure)
         self.layout.addWidget(self.canvas)
-        
-        self.restart_button = QPushButton("Plot Another Function")
-        self.restart_button.clicked.connect(self.restart)
-        self.restart_button.setStyleSheet("background-color: #1260CC;;border-radius: 10px; padding: 10px; color: white; font-weight: bold; font-size: 20px;")
-        self.layout_2.addWidget(self.restart_button)
 
-        self.save_button = QPushButton("Save Image")
-        self.save_button.clicked.connect(self.save_image)
-        self.save_button.setStyleSheet("background-color: #1260CC;;border-radius: 10px; padding: 10px; color: white; font-weight: bold; font-size: 20px;")
-        self.layout_2.addWidget(self.save_button)
+        self.restart_button = self.add_button("Plot Another Function", self.layout_2, self.restart)
+
+        self.save_button = self.add_button("Save the plot", self.layout_2, self.save_image)
         self.layout.addLayout(self.layout_2)
         
         central_widget = QWidget()
         central_widget.setLayout(self.layout)
         self.setCentralWidget(central_widget)
     
-    def configure_input_widgets(self, label_text, layout):
+    def add_input_widgets(self, label_text, layout):
         input_layout = QHBoxLayout()
         
         input_label = QLabel(label_text)
@@ -87,17 +60,31 @@ class MainWindow(QMainWindow):
         font = input_label.font()
         font.setPointSize(13)
         input_label.setFont(font)
-        
         line_edit = QLineEdit()
         line_edit.setStyleSheet("border-radius: 10px; padding: 10px; background-color: white;")
         line_edit.setFixedWidth(600)
-        line_edit.setAlignment(Qt.AlignCenter)
-        
+        line_edit.setAlignment(Qt.AlignCenter)   
         input_layout.addWidget(input_label)
-        input_layout.addWidget(line_edit)
-        
+        input_layout.addWidget(line_edit)  
         layout.addLayout(input_layout)
         self.input_layouts.append((input_label, line_edit))
+
+    def add_button(self, label_text, layout, function):
+        button = QPushButton(label_text)
+        button.clicked.connect(function)
+        button.setStyleSheet("background-color: #1260CC;;border-radius: 10px; padding: 10px; color: white; font-weight: bold; font-size: 20px;")
+        button.setFixedWidth(400)
+        layout.addWidget(button)
+        return button
+
+    def add_checkbox(self, label_text, layout, function):
+        checkbox = QCheckBox(label_text)
+        checkbox.setStyleSheet("QCheckBox::indicator { width: 25px; height: 25px; }")
+        checkbox.setStyleSheet("color: #1260CC; font-weight: bold; font-size: 20px;")
+        checkbox.setFixedWidth(400)
+        checkbox.stateChanged.connect(function)
+        layout.addWidget(checkbox)
+        return checkbox
     
     def plot(self):
         function = self.input_layouts[0][1].text()
