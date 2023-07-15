@@ -73,7 +73,7 @@ class MainWindow(QMainWindow):
         button = QPushButton(label_text)
         button.clicked.connect(function)
         button.setStyleSheet("background-color: #1260CC;;border-radius: 10px; padding: 10px; color: white; font-weight: bold; font-size: 20px;")
-        button.setFixedWidth(400)
+        button.setFixedWidth(250)
         layout.addWidget(button)
         return button
 
@@ -160,21 +160,7 @@ class MainWindow(QMainWindow):
             save_message.setText(f"The image was saved successfully at:\n{file_path}")
             save_message.setIcon(QMessageBox.Information)
             save_message.exec_()
-
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.adjust_button_sizes()
-    
-    def adjust_button_sizes(self):
-        font_metrics = QFontMetrics(self.font())
-        plot_button_width = font_metrics.width(self.plot_button.text()) + 100
-        restart_button_width = font_metrics.width(self.restart_button.text()) + 100
-        save_button_width = font_metrics.width(self.save_button.text()) + 100
-    
-        self.plot_button.setFixedWidth(plot_button_width)
-        self.restart_button.setFixedWidth(restart_button_width)
-        self.save_button.setFixedWidth(save_button_width)
-        
+           
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = MainWindow()
