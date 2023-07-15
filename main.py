@@ -6,7 +6,6 @@ from PySide2.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PySide2 import QtGui
 from PySide2.QtGui import QFontMetrics, QFont, QIcon
-from MainWindow import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
