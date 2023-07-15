@@ -46,11 +46,6 @@ class MainWindow(QMainWindow):
 
         self.save_button = self.add_button("Save the plot", self.layout_2, self.save_image)
         self.layout.addLayout(self.layout_2)
-
-        self.error_label = QLabel(self)
-        self.error_label.setFixedHeight(50)
-        self.error_label.setStyleSheet("color: red")
-        self.layout.addWidget(self.error_label)
         
         central_widget = QWidget()
         central_widget.setLayout(self.layout)
@@ -98,12 +93,32 @@ class MainWindow(QMainWindow):
         upper = float(self.input_layouts[2][1].text())
         
         x = np.linspace(lower, upper, 1000)
+        error_message = QMessageBox()
         try:
             y = eval(function.replace("^", "**"))
+        except SyntaxError as e:
+            error_message.setWindowTitle("Error!")
+            error_message.setText("Error: Syntax Error in the function.")
+            error_message.setIcon(QMessageBox.Critical)
+            error_message.exec_()
+            return
+        except ZeroDivisionError as e:
+            error_message.setWindowTitle("Error!")
+            error_message.setText("Error: Division by zero in the function.")
+            error_message.setIcon(QMessageBox.Critical)
+            error_message.exec_()
+            return
+        except NameError as e:
+            error_message.setWindowTitle("Error!")
+            error_message.setText("Error: Invalid function.")
+            error_message.setIcon(QMessageBox.Critical)
+            error_message.exec_()
+            return
         except Exception as e:
-            self.error_label.setText("Error: " + str(e))
-            self.figure.clear()
-            self.canvas.draw()
+            error_message.setWindowTitle("Error!")
+            error_message.setText("Error: Invalid function.")
+            error_message.setIcon(QMessageBox.Critical)
+            error_message.exec_()
             return
         
         self.error_label.clear()
@@ -142,11 +157,11 @@ class MainWindow(QMainWindow):
         file_path, _ = file_dialog.getSaveFileName(self, "Save Image", "", "PNG (*.png);;JPEG (*.jpg *.jpeg)")
         if file_path:
             self.figure.savefig(file_path, dpi=300)
-            message_box = QMessageBox()
-            message_box.setWindowTitle("Image Saved")
-            message_box.setText(f"The image was saved successfully at:\n{file_path}")
-            message_box.setIcon(QMessageBox.Information)
-            message_box.exec_()
+            save_message = QMessageBox()
+            save_message.setWindowTitle("Image Saved")
+            save_message.setText(f"The image was saved successfully at:\n{file_path}")
+            save_message.setIcon(QMessageBox.Information)
+            save_message.exec_()
 
     def resizeEvent(self, event):
         super().resizeEvent(event)
