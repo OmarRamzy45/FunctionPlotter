@@ -6,6 +6,7 @@ from PySide2.QtCore import QSize, Qt
 from matplotlib.backends.backend_qt5agg import FigureCanvasQTAgg as FigureCanvas
 from PySide2 import QtGui
 from PySide2.QtGui import QFontMetrics, QFont, QIcon
+from MainWindow import *
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -45,6 +46,11 @@ class MainWindow(QMainWindow):
 
         self.save_button = self.add_button("Save the plot", self.layout_2, self.save_image)
         self.layout.addLayout(self.layout_2)
+
+        self.error_label = QLabel(self)
+        self.error_label.setFixedHeight(50)
+        self.error_label.setStyleSheet("color: red")
+        self.layout.addWidget(self.error_label)
         
         central_widget = QWidget()
         central_widget.setLayout(self.layout)
@@ -92,16 +98,23 @@ class MainWindow(QMainWindow):
         upper = float(self.input_layouts[2][1].text())
         
         x = np.linspace(lower, upper, 1000)
-        y = eval(function.replace("^", "**"))        
-
+        try:
+            y = eval(function.replace("^", "**"))
+        except Exception as e:
+            self.error_label.setText("Error: " + str(e))
+            self.figure.clear()
+            self.canvas.draw()
+            return
+        
+        self.error_label.clear()
         self.figure.clear()
         plt.plot(x, y)
         plt.xlabel('x')
         plt.ylabel('y')
-        plt.title('Function Plot')
+        plt.title(f'Function Plot for {function}')
         self.update_plot_grid()
         self.canvas.draw()
-    
+        
     def update_plot_grid(self):
         if self.grid_checkbox.isChecked():
             plt.grid(True)
@@ -120,6 +133,7 @@ class MainWindow(QMainWindow):
     def restart(self):
         for label, line_edit in self.input_layouts:
             line_edit.clear()
+        self.error_label.clear()
         self.figure.clear()
         self.canvas.draw()
     
