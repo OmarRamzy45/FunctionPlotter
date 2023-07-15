@@ -121,7 +121,6 @@ class MainWindow(QMainWindow):
             error_message.exec_()
             return
         
-        self.error_label.clear()
         self.figure.clear()
         plt.plot(x, y)
         plt.xlabel('x')
@@ -142,13 +141,13 @@ class MainWindow(QMainWindow):
             plt.axhline(y=0, color='k')
             plt.axvline(x=0, color='k')
         else:
-            self.plot()
+            plt.axhline(y=0, color='w')
+            plt.axvline(x=0, color='w')
         self.canvas.draw()
     
     def restart(self):
         for label, line_edit in self.input_layouts:
             line_edit.clear()
-        self.error_label.clear()
         self.figure.clear()
         self.canvas.draw()
     
