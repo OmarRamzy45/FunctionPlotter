@@ -56,9 +56,9 @@ class MainWindow(QMainWindow):
         self.file_dialog = QFileDialog()
 
         # Create a central widget and set it as the main window's central widget
-        central_widget = QWidget()
-        central_widget.setLayout(self.layout)
-        self.setCentralWidget(central_widget)
+        self.central_widget = QWidget()
+        self.central_widget.setLayout(self.layout)
+        self.setCentralWidget(self.central_widget)
 
     def add_input_widgets(self, label_text, layout):
         # Function to add input field and label to a given layout
