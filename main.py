@@ -117,14 +117,33 @@ class MainWindow(QMainWindow):
     def plot(self):
         # Function to plot the given function within the specified range
         function = self.input_layouts[0][1].text()
-        lower = float(self.input_layouts[1][1].text())
-        upper = float(self.input_layouts[2][1].text())
 
+        try:
+            # Try to convert the range input to float
+            lower = float(self.input_layouts[1][1].text())
+            upper = float(self.input_layouts[2][1].text())
+        except ValueError:
+            # Show error message if the range input is not a number
+            self.error_message.setWindowTitle("Error!")
+            self.error_message.setText("Error: range should be a number.")
+            self.error_message.setIcon(QMessageBox.Critical)
+            self.error_message.exec_()
+            return
+   
         # Check for division by zero in the function input
         if "/ 0" in function or "/0" in function:
             # Show error message if the function contains division by zero
             self.error_message.setWindowTitle("Error!")
             self.error_message.setText("Error: Division by zero in the function.")
+            self.error_message.setIcon(QMessageBox.Critical)
+            self.error_message.exec_()
+            return
+
+        # check for invalid range
+        if lower >= upper or lower == upper:
+            # Show error message if the lower bound is greater than or equal to the upper bound
+            self.error_message.setWindowTitle("Error!")
+            self.error_message.setText("Error: maximum value should be greater than minimum.")
             self.error_message.setIcon(QMessageBox.Critical)
             self.error_message.exec_()
             return

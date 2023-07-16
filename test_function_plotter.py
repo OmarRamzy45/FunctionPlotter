@@ -45,8 +45,8 @@ def test_plot_with_invalid_input(qtbot):
     plot = window.figure
     # Act
     function_input.setText("x**")
-    min_input.setText("10")
-    max_input.setText("-10")
+    min_input.setText("-10")
+    max_input.setText("10")
     qtbot.mouseClick(plot_button, Qt.LeftButton)
     # Assert
     assert not plot.axes # check if the plot is empty
@@ -71,7 +71,7 @@ def test_plot_with_zero_division(qtbot):
     # Assert
     assert not plot.axes # check if the plot is empty
     assert window.error_message.text() == "Error: Division by zero in the function."
-y
+
 def test_reset(qtbot):
     # Test the reset button works correctly
     # Arrange
@@ -95,3 +95,43 @@ def test_reset(qtbot):
     assert min_input.text() == "" 
     assert max_input.text() == ""
     assert not plot.axes # check if the plot is empty
+
+def test_plot_with_invalid_min_max(qtbot):
+    # Test the plot is not shown when the input is invalid
+    # Arrange
+    window = MainWindow()
+    window.show()
+    qtbot.addWidget(window)
+    function_input = window.input_layouts[0][1]
+    min_input = window.input_layouts[1][1]
+    max_input = window.input_layouts[2][1]
+    plot_button = window.plot_button
+    plot = window.figure
+    # Act
+    function_input.setText("x**2")
+    min_input.setText("10")
+    max_input.setText("-10")
+    qtbot.mouseClick(plot_button, Qt.LeftButton)
+    # Assert
+    assert not plot.axes # check if the plot is empty
+    assert window.error_message.text() == "Error: maximum value should be greater than minimum."
+
+def test_plot_with_invalid_min_max_2(qtbot):
+    # Test the plot is not shown when the input is invalid
+    # Arrange
+    window = MainWindow()
+    window.show()
+    qtbot.addWidget(window)
+    function_input = window.input_layouts[0][1]
+    min_input = window.input_layouts[1][1]
+    max_input = window.input_layouts[2][1]
+    plot_button = window.plot_button
+    plot = window.figure
+    # Act
+    function_input.setText("x**2")
+    min_input.setText("a")
+    max_input.setText("10")
+    qtbot.mouseClick(plot_button, Qt.LeftButton)
+    # Assert
+    assert not plot.axes # check if the plot is empty
+    assert window.error_message.text() == "Error: range should be a number."
