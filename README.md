@@ -35,9 +35,7 @@ python3.8 -m pytest test_function_plotter.py
 
 # Examples
 example for plotting (x^2 + 2x + 1) from -10 to 10
-!(Examples/plot1.png)
-
-
+![plot](Examples/plot.png)
 
 
 
