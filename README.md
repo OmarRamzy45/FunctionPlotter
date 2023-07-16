@@ -34,8 +34,19 @@ python3.8 -m pytest test_function_plotter.py
 ```
 
 # Examples
-example for plotting (x^2 + 2x + 1) from -10 to 10
-![plot](Examples/plot.png)
+- Example for plotting (x^2 + 2x + 1) from -10 to 10
+- Example for Syntax Error for invalid input function
+- Example for ZeroDivisionError
+- Example for ValueError for invalid input range
+- Test cases for the function plotter
+for test cases details, please check the test_function_plotter.py file
+test cases are implemented using pytest and pytest-qt and they are:
+- test_plotting
+- test_plot_with_invalid_input
+- test_plot_with_zero_division
+- test_reset
+- test_plot_with_invalid_range
+
 
 
 

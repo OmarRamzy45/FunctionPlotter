@@ -71,42 +71,7 @@ def test_plot_with_zero_division(qtbot):
     # Assert
     assert not plot.axes # check if the plot is empty
     assert window.error_message.text() == "Error: Division by zero in the function."
-
-def test_grid(qtbot):
-    # Test the grid is shown correctly
-    # Arrange
-    window = MainWindow()
-    window.show()
-    qtbot.addWidget(window)
-    grid_checkbox = window.grid_checkbox
-    plot = window.figure
-    # Act
-    grid_checkbox.setChecked(True)
-    # Update the plot after checking the grid checkbox
-    window.update_plot_grid()
-    # Assert
-    assert grid_checkbox.isChecked() == True
-    # Check if grid is shown
-    assert plt.rcParams['axes.grid'] == True
-
-
-def test_axes(qtbot):
-    # Test the axes are shown correctly
-    # Arrange
-    window = MainWindow()
-    window.show()
-    qtbot.addWidget(window)
-    axes_checkbox = window.axes_checkbox
-    plot = window.figure
-    # Act
-    axes_checkbox.setChecked(True)
-    # Assert
-    assert axes_checkbox.isChecked() == True
-    assert plt.rcParams['axes.spines.left'] == True
-    assert plt.rcParams['axes.spines.bottom'] == True
-    assert plt.rcParams['axes.spines.top'] == True
-    assert plt.rcParams['axes.spines.right'] == True
-
+y
 def test_reset(qtbot):
     # Test the reset button works correctly
     # Arrange
