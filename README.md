@@ -26,7 +26,17 @@ You can install the required libraries using `pip`:
 pip install PySide2 numpy matplotlib pytest pytest-qt
 ``` 
 
-# Examples
+## Running the Application
+to run the application, navigate to the project directory and run the following command in the terminal:
+
+```bash
+python3.8 main.py
+```
+* change the command based on your python version.
+
+
+## Examples
+###### I used Linux (Ubuntu 20.04 LTS) and Python 3.8.10 to make and test this application.
 - Example for plotting (x^2 + 2x + 1) from -10 to 10
 ![image info](./Examples/plot1.png)
 - Example for Syntax Error for invalid input function
@@ -40,7 +50,7 @@ pip install PySide2 numpy matplotlib pytest pytest-qt
 ![image info](./Examples/limit_string.png)
 
 ## Testing
-Automated tests are implemented using pytest and pytest-qt. To run the tests, navigate to the project directory and run the following command:
+Automated tests are implemented using pytest and pytest-qt. To run the tests, navigate to the project directory and run the following command in the terminal:
 
 ```bash
 python3.8 -m pytest test_function_plotter.py
