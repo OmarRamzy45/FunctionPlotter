@@ -115,13 +115,12 @@ class MainWindow(QMainWindow):
         return checkbox
 
     def plot(self):
-        # Function to plot the given function within the specified range
-        function = self.input_layouts[0][1].text()
 
         try:
             # Try to convert the range input to float
             lower = float(self.input_layouts[1][1].text())
             upper = float(self.input_layouts[2][1].text())
+            x = np.linspace(lower, upper, 1000)  # Generate x values for the plot
         except ValueError:
             # Show error message if the range input is not a number
             self.error_message.setWindowTitle("Error!")
@@ -129,12 +128,22 @@ class MainWindow(QMainWindow):
             self.error_message.setIcon(QMessageBox.Critical)
             self.error_message.exec_()
             return
-   
-        # Check for division by zero in the function input
-        if "/ 0" in function or "/0" in function:
-            # Show error message if the function contains division by zero
+        
+        try:
+            # Function to plot the given function within the specified range
+            function = self.input_layouts[0][1].text()
+            y = eval(function.replace("^", "**"))
+        except SyntaxError as e:
+            # Show error message if there is a syntax error in the function
             self.error_message.setWindowTitle("Error!")
-            self.error_message.setText("Error: Division by zero in the function.")
+            self.error_message.setText("Error: Syntax Error in the function.")
+            self.error_message.setIcon(QMessageBox.Critical)
+            self.error_message.exec_()
+            return
+        except NameError as e:
+            # Show error message if there is an invalid function
+            self.error_message.setWindowTitle("Error!")
+            self.error_message.setText("Error: Syntax Error in the function.")
             self.error_message.setIcon(QMessageBox.Critical)
             self.error_message.exec_()
             return
@@ -148,40 +157,27 @@ class MainWindow(QMainWindow):
             self.error_message.exec_()
             return
 
-        x = np.linspace(lower, upper, 1000)  # Generate x values for the plot
+        # Check for division by zero in the function input
+        if "/ 0" in function or "/0" in function:
+            # Show error message if the function contains division by zero
+            self.error_message.setWindowTitle("Error!")
+            self.error_message.setText("Error: Division by zero in the function.")
+            self.error_message.setIcon(QMessageBox.Critical)
+            self.error_message.exec_()
+            return
 
         try:
-            # Evaluate the function to get y values for the plot
-            y = eval(function.replace("^", "**"))
-        except SyntaxError as e:
-            # Show error message if there is a syntax error in the function
-            self.error_message.setWindowTitle("Error!")
-            self.error_message.setText("Error: Syntax Error in the function.")
-            self.error_message.setIcon(QMessageBox.Critical)
-            self.error_message.exec_()
-            return
-        except NameError as e:
-            # Show error message if there is an invalid function
-            self.error_message.setWindowTitle("Error!")
-            self.error_message.setText("Error: Invalid function.")
-            self.error_message.setIcon(QMessageBox.Critical)
-            self.error_message.exec_()
+            # Clear the previous plot and create a new one with the new data
+            self.figure.clear()
+            plt.plot(x, y)
+            plt.xlabel('x')  # Set x-axis label
+            plt.ylabel('y')  # Set y-axis label
+            plt.title(f'Function Plot for {function}')  # Set the plot title with the function
+            self.update_plot_grid()  # Update the plot grid based on the checkbox state
+            self.canvas.draw()  # Redraw the canvas to display the updated plot
         except Exception as e:
-            # Show error message for any other exceptions
-            self.error_message.setWindowTitle("Error!")
-            self.error_message.setText("Error: Invalid function.")
-            self.error_message.setIcon(QMessageBox.Critical)
-            self.error_message.exec_()
             return
 
-        # Clear the previous plot and create a new one with the new data
-        self.figure.clear()
-        plt.plot(x, y)
-        plt.xlabel('x')  # Set x-axis label
-        plt.ylabel('y')  # Set y-axis label
-        plt.title(f'Function Plot for {function}')  # Set the plot title with the function
-        self.update_plot_grid()  # Update the plot grid based on the checkbox state
-        self.canvas.draw()  # Redraw the canvas to display the updated plot
 
     def update_plot_grid(self):
         # Function to update the plot grid based on the state of the grid checkbox
@@ -209,6 +205,8 @@ class MainWindow(QMainWindow):
             line_edit.clear()  # Clear all input fields
         self.figure.clear()  # Clear the previous plot
         self.canvas.draw()  # Redraw the canvas to display the cleared plot
+        self.grid_checkbox.setChecked(False)  # Uncheck the grid checkbox
+        self.axes_checkbox.setChecked(False)  # Uncheck the axes checkbox
 
     def save_image(self):
         # Function to save the plot as an image

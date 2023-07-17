@@ -6,6 +6,7 @@ from PySide2.QtWidgets import QLineEdit, QPushButton, QCheckBox
 from PySide2.QtCore import Qt
 import matplotlib.pyplot as plt  # Import the plt module to access the grid setting
 
+
 def test_plot(qtbot):
     # Test the plot is shown correctly
     # Arrange
@@ -65,12 +66,13 @@ def test_plot_with_zero_division(qtbot):
     plot = window.figure
     # Act
     function_input.setText("x/0")
-    min_input.setText("10")
-    max_input.setText("-10")
+    min_input.setText("-10")
+    max_input.setText("10")
     qtbot.mouseClick(plot_button, Qt.LeftButton)
     # Assert
     assert not plot.axes # check if the plot is empty
     assert window.error_message.text() == "Error: Division by zero in the function."
+    assert ZeroDivisionError
 
 def test_reset(qtbot):
     # Test the reset button works correctly
